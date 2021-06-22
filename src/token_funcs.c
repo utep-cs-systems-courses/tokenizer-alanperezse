@@ -9,17 +9,31 @@ int non_space_char(char c) {
 }
 
 char *word_start(char *str) {
+  int idx = 0;
   while(1) {
+    if(space_char(*(str + idx))) idx++;
 
-    if(space_char(*str)) str++;
-
-    else return str;
+    else return str + idx;
   }
 }
 
-char *word terminator(char *word) {
-  while(*word != '\0' && space_char(*word)) word++;
+char *word_terminator(char *word) {
+  int idx = 0;
+  while(*(word + idx) != '\0' && non_space_char(*(word + idx))) idx++;
 
-  // Once a zero pointer or a pointer to a space is found, return the pointer previous to it.
-  return --word;
+  return word + idx;
+}
+
+int count_words(char *s) {
+  // Dinamically changing pointer
+  char *pointer = s;
+  // Return variable
+  int rtn = 0;
+
+  while(*(pointer = word_start(pointer)) != '\0') {
+    rtn++;
+    pointer = word_terminator(pointer);
+  }
+
+  return rtn;
 }
