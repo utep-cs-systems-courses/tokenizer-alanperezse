@@ -57,7 +57,7 @@ char *copy_str(char *inStr, short len) {
 char **tokenize(char *s) {
   int num_tokens = count_words(s);
 
-  char **tokens = malloc((num_tokens + 1) * sizeof(char *));
+  char **tokens = malloc((num_tokens) * sizeof(char *));
 
   char *e = 0; // End of word
   for(int i = 0; i < num_tokens; i++) {
@@ -66,7 +66,7 @@ char **tokenize(char *s) {
     e = word_terminator(s);
 
     // Copy string to pointer
-    *(tokens + i) = copy_str(s, e - s + 1);
+    *(tokens + i) = copy_str(s, e - s);
 
     // Update s for next iteration
     s = e;
@@ -88,5 +88,12 @@ void print_tokens(char **tokens) {
 }
 
 void free_tokens(char **tokens) {
-  printf("FIX ME");
+  int i = 0;
+  // Free character vectors
+  do {
+    free(*(tokens + i));
+  }while(**(tokens + i++) != 0);
+
+  // Free pointer vectors
+  free(tokens);
 }

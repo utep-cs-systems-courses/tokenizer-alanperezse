@@ -1,4 +1,4 @@
-OBJS = token_funcs.o tester.c
+OBJS = token_funcs.o history_funcs.o tester.c
 
 CFLAGS = -g -O3
 
@@ -11,7 +11,7 @@ $(OBJS): tokenizer.h
 
 clean:
 	@echo "Cleaning up..."
-	rm -f *.o *~
+	rm -f *.o *~ tester
 
 run: tester
 	./tester
