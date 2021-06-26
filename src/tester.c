@@ -17,12 +17,22 @@
  #define mu_run_test(test) do { char *message = test(); tests_run++; if (message) return message; } while (0)
 int tests_run;
 
+static char *test_llStrlen() {
+  char *str = "hello", *empty = "";
+  mu_assert("llStrlen('hello') == 5", llStrlen(str) == 5);
+
+  mu_assert("llStrlen('empty') == 0", llStrlen(empty) == 0);
+
+  return 0;
+}
+
 static char *test_find_word_start() {
   char *str = "  happy", *empty = "";
 
   mu_assert("word_start('  happy') == &str[2]'", word_start(str) == &str[2]);
 
   mu_assert("word_start(empty) == zero pointer", *word_start(empty) == 0);
+
   return 0;
 }
 
@@ -39,6 +49,7 @@ static char *test_count_words() {
     mu_assert("count_words('happy happy joy joy') == 4", count_words(str) == 4);
 
     mu_assert("", count_words("") == 0);
+    
     return 0;
 }
 
@@ -53,7 +64,7 @@ static char *test_tokenize() {
     mu_assert("tokens[4] == 0", tokens[4] == 0);
     
     free_tokens(tokens);
-    
+  
     return 0;
 }
 
@@ -64,6 +75,7 @@ static char *test_add_history() {
     mu_assert("add_history(list, 'happy')", strcmp(list->root->str, "happy") == 0);
     add_history(list, "joy");
     mu_assert("add_history(list, 'joy')", strcmp(list->root->next->str, "joy") == 0);
+
     free_history(list);
     return 0;
 }
@@ -82,29 +94,31 @@ static char *test_get_history() {
   char **words = tokenize("The man who sold the world");
 
   int i = 0;
-  while(**(words + i) != 0) {
+  while(*(words + i) != 0) {
     add_history(list, *(words + i));
     i++;
   }
 
   i = 0;
-  while(**(words + i) != 0) {
+  while(*(words + i) != 0) {
     mu_assert("get_history", strcmp(get_history(list, i), *(words + i)) == 0);
     i++;
   }
 
+  mu_assert("", 1);
   free_tokens(words);
   free_history(list);
+  
   return 0;
 }
 
-static int test_print_history() {
-  printf("\nNow testing print history\n");
+static char *test_print_history() {
   List *list = init_history();
   char **words = tokenize("The man who sold the world");
 
   int i = 0;
   while(*(words + i) != 0) {
+    puts(*(words + i));
     add_history(list, *(words + i));
     i++;
   }
@@ -115,9 +129,10 @@ static int test_print_history() {
  
   free_tokens(words);
   free_history(list);
+
+  mu_assert("", 1);
   return 0;
 }
-
 
 static char *all_tests() {
     if (TEST_TOKENIZER) {
@@ -128,11 +143,11 @@ static char *all_tests() {
     }
 
     if (TEST_HISTORY) {
+      mu_run_test(test_llStrlen);
       mu_run_test(test_add_history);
       mu_run_test(test_get_history);
-      test_print_history();
+      mu_run_test(test_print_history);
     }
-
     return 0;
 }
 

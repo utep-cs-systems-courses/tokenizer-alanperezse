@@ -85,9 +85,10 @@ void print_tokens(char **tokens) {
 void free_tokens(char **tokens) {
   int i = 0;
   // Free character vectors
-  do {
+  while(*(tokens + i) != 0) {
     free(*(tokens + i));
-  }while(*(tokens + i++) != 0);
+    i++;
+  }
 
   // Free pointer vectors
   free(tokens);

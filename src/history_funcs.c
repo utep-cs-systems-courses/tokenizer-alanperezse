@@ -3,76 +3,86 @@
 #include "history.h"
 
 void free_node(Item *node);
-int llStrlen(char *s);
 
 int llStrlen(char *s) {
-  char *sc = s;
-  while (*sc++)
-    return sc - s;
+  char *e = s;
+  while(*e != '\0') e++;
+  
+  return e - s;
 }
 
 List *init_history() {
   List *rtn = malloc(sizeof(List));
-  rtn->root = init_node();
-  rtn->root->id = 0;
+  rtn->root = 0;
   return rtn;
 }
 
 Item *init_node() {
   Item *rtn = malloc(sizeof(Item));
+  rtn->next = 0;
   return rtn;
 }
 
 void add_history(List *list, char *str) {
-  Item *curr = list->root;
-
-  // Go to last node
-  while(curr->next != 0) curr = curr->next;
-  // Copy str to current node
+  // Set up new node
+  Item *newNode = init_node();
   int len = llStrlen(str), sindex = 0;
   char *scopy = malloc((len + 1) * sizeof(char)), c;
   do {
     c = *(scopy + sindex) = *(str + sindex);
     sindex++;
   }while(c);
-  
-  curr->str = scopy;
+  newNode->str = scopy;
 
-  // Set up  next node
-  curr->next = init_node();
-  curr->next->id = curr->id + 1;
+  // Find insertion point
+  if(list->root == 0) { // Empty list
+    list->root = newNode;
+    newNode->id = 0;
+  } else {
+    Item *curr = list->root;
+    // Iterate until last node is found
+    while(curr->next != 0) curr = curr->next;
+    curr->next = newNode;
+    newNode->id = curr->id + 1;
+  }
 }
 
 char *get_history(List *list, int id) {
+  // Invalid id
   if(id < 0) return 0;
 
+  // Empty list
+  if(list->root == 0) return 0;
+
   Item *curr = list->root;
-  while(id != curr->id) {
-    // If you are in the last (empty) node
-    if(curr->str == 0) return 0;
+
+  while(curr->id != id) {
+    // No nodes left
+    if(curr->next == 0) return 0;
+
     curr = curr->next;
   }
+
   return curr->str;
 }
 
 void print_history(List *list) {
   Item *curr = list->root;
-  while(curr->str != 0) {
+  while(curr != 0) {
     puts(curr->str);
     curr = curr->next;
   }
 }
 
-void free_node(Item *node) {
+void free_node(Item *node) {  
   // Recursive call
-  if(node->next != 0) free_node(node->next); 
+  if(node->next != 0) free_node(node->next);
 
-  if(node->str != 0) free(node->str);
-
+  free(node->str);
   free(node);
 }
 
 void free_history(List *list) {
-  free_node(list->root);
+  if(list->root != 0) free_node(list->root);
   free(list);
 }
