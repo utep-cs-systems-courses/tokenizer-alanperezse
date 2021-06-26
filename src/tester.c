@@ -35,8 +35,10 @@ static char *test_find_word_terminator() {
 }
 
 static char *test_count_words() {
-    char *str = "happy happy joy joy";
+  char *str = "happy happy joy joy";
     mu_assert("count_words('happy happy joy joy') == 4", count_words(str) == 4);
+
+    mu_assert("", count_words("") == 0);
     return 0;
 }
 
@@ -48,13 +50,14 @@ static char *test_tokenize() {
     mu_assert("tokens[1] == 'happy'", strcmp(tokens[1], "happy") == 0);
     mu_assert("tokens[2] == 'joy'", strcmp(tokens[2], "joy") == 0);
     mu_assert("tokens[3] == 'joy'", strcmp(tokens[3], "joy") == 0);
+    mu_assert("tokens[4] == 0", tokens[4] == 0);
     
     free_tokens(tokens);
     
     return 0;
 }
 
-/* History test cases */
+/* History test cases*/ 
 static char *test_add_history() {
     List* list = init_history();
     add_history(list, "happy");
@@ -71,8 +74,8 @@ static char *test_get_history() {
     add_history(list, "happy");
     mu_assert("get_history(list, 1)", strcmp(get_history(list, 1), "happy") == 0);
     return 0;
-    }
-*/
+    }*/
+
 
 static char *test_get_history() {
   List *list = init_history();
@@ -89,6 +92,8 @@ static char *test_get_history() {
     mu_assert("get_history", strcmp(get_history(list, i), *(words + i)) == 0);
     i++;
   }
+
+  free_tokens(words);
   free_history(list);
   return 0;
 }
@@ -99,7 +104,7 @@ static int test_print_history() {
   char **words = tokenize("The man who sold the world");
 
   int i = 0;
-  while(**(words + i) != 0) {
+  while(*(words + i) != 0) {
     add_history(list, *(words + i));
     i++;
   }
@@ -107,9 +112,9 @@ static int test_print_history() {
   print_history(list);
 
   printf("\nBy Kurt Cobain...\n\n");
-
-  //free_history(list);
+ 
   free_tokens(words);
+  free_history(list);
   return 0;
 }
 
@@ -123,24 +128,24 @@ static char *all_tests() {
     }
 
     if (TEST_HISTORY) {
-        mu_run_test(test_add_history);
-	mu_run_test(test_get_history);
-	test_print_history();
+      mu_run_test(test_add_history);
+      mu_run_test(test_get_history);
+      test_print_history();
     }
 
     return 0;
 }
 
- int main(int argc, char **argv) {   
-    char *result = all_tests();
-
-    if (result != 0) 
-        printf("Failed test: %s\n", result);
-    else 
-        printf("ALL TESTS PASSED\n");
-    
-    printf("Tests run: %d\n", tests_run);
-
-    return result != 0;
- }
+int main(int argc, char **argv) {   
+  char *result = all_tests();
+  
+  if (result != 0) 
+    printf("Failed test: %s\n", result);
+  else 
+    printf("ALL TESTS PASSED\n");
+  
+  printf("Tests run: %d\n", tests_run);
+  
+  return result != 0;
+}
 

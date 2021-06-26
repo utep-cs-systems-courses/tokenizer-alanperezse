@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include "history.h"
 
+void free_node(Item *node);
+int llStrlen(char *s);
+
 int llStrlen(char *s) {
   char *sc = s;
   while (*sc++)
@@ -33,7 +36,7 @@ void add_history(List *list, char *str) {
     sindex++;
   }while(c);
   
-  curr->str = scopy;// FIX THIS
+  curr->str = scopy;
 
   // Set up  next node
   curr->next = init_node();
@@ -44,9 +47,9 @@ char *get_history(List *list, int id) {
   if(id < 0) return 0;
 
   Item *curr = list->root;
-  while(id-- > 0) {
+  while(id != curr->id) {
+    // If you are in the last (empty) node
     if(curr->str == 0) return 0;
-
     curr = curr->next;
   }
   return curr->str;
@@ -62,15 +65,14 @@ void print_history(List *list) {
 
 void free_node(Item *node) {
   // Recursive call
-  if(node->next != 0) free_node(node->next);
+  if(node->next != 0) free_node(node->next); 
 
-  // Free current pointer fields
-  free(node->str);
-  free(node->next);
+  if(node->str != 0) free(node->str);
+
+  free(node);
 }
 
 void free_history(List *list) {
   free_node(list->root);
-  free(list->root);
   free(list);
 }
