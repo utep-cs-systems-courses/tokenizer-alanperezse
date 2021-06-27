@@ -1,17 +1,17 @@
-OBJS = token_funcs.o history_funcs.o tester.c
+OBJS = token_funcs.o history_funcs.o uimain.o
 
 CFLAGS = -g -O3
 
-all: tester
+all: uimain
 
-tester: $(OBJS)
-	cc -o tester $(CFLAGS) $(OBJS)
+uimain: $(OBJS)
+	cc -o uimain $(CFLAGS) $(OBJS)
 
-$(OBJS): tokenizer.h
+$(OBJS): tokenizer.h history.h
 
 clean:
 	@echo "Cleaning up..."
-	rm -f *.o *~ tester
+	rm -f *.o *~ uimain
 
-run: tester
-	./tester
+run: uimain
+	./uimain

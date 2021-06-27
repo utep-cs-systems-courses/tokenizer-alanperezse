@@ -101,11 +101,10 @@ static char *test_get_history() {
 
   i = 0;
   while(*(words + i) != 0) {
-    mu_assert("get_history", strcmp(get_history(list, i), *(words + i)) == 0);
+    mu_assert("get_history", strcmp(get_history(list, i + 1), *(words + i)) == 0);
     i++;
   }
 
-  mu_assert("", 1);
   free_tokens(words);
   free_history(list);
   

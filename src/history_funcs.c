@@ -37,7 +37,7 @@ void add_history(List *list, char *str) {
   // Find insertion point
   if(list->root == 0) { // Empty list
     list->root = newNode;
-    newNode->id = 0;
+    newNode->id = 1;
   } else {
     Item *curr = list->root;
     // Iterate until last node is found
@@ -49,7 +49,7 @@ void add_history(List *list, char *str) {
 
 char *get_history(List *list, int id) {
   // Invalid id
-  if(id < 0) return 0;
+  if(id < 1) return 0;
 
   // Empty list
   if(list->root == 0) return 0;
@@ -67,9 +67,14 @@ char *get_history(List *list, int id) {
 }
 
 void print_history(List *list) {
+  if(list->root == 0) {
+    puts("No elements to display\n");
+    return;
+  }
+  
   Item *curr = list->root;
   while(curr != 0) {
-    puts(curr->str);
+    printf("%d. %s", curr->id, curr->str);
     curr = curr->next;
   }
 }

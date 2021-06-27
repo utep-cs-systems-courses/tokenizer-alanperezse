@@ -79,7 +79,7 @@ char **tokenize(char *s) {
 }
 
 void print_tokens(char **tokens) {
-  while(*tokens != 0) puts(*(tokens++));
+  while(*tokens != 0) printf(" - %s\n", *(tokens++));
 }
 
 void free_tokens(char **tokens) {
