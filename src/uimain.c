@@ -8,7 +8,9 @@
 int is_print(char *str);
 int is_quit(char *str);
 int is_id(char *str);
+int input_to_id(char *str);
 void tokenize_history(List *list, int idx);
+void format_input(char *str);
 
 int main() {
   char input[MAX_LIMIT];
@@ -19,6 +21,7 @@ int main() {
   do {
     printf("\nPlease provide a sentence to tokenize.\n Press '!q' to quit, press '!p' to print a list of saved inputs, press '!n' to tokenize the string with id = n from the list.\n> "); 
     fgets(input, MAX_LIMIT, stdin);
+    format_input(input);
     puts("");
 
     // Print previous strings
@@ -26,7 +29,7 @@ int main() {
     // Break while
     else if(is_quit(input)) break;
     // Print element
-    else if(idx = is_id(input)) tokenize_history(list, idx);
+    else if(is_id(input)) tokenize_history(list, input_to_id(input));
     // Add and then pring last element
     else {
       add_history(list, input);
@@ -60,7 +63,7 @@ int is_print(char *str) {
   char *e = word_terminator(s);
   e = word_start(e);
   
-  return (s[0] == '!' && s[1] == 'p' && (s[2] == '\n' || s[2] == ' ' || s[2] == 0));
+  return (s[0] == '!' && s[1] == 'p' && (s[2] == ' ' || s[2] == 0));
 }
 
 int is_quit(char *str) {
@@ -68,15 +71,57 @@ int is_quit(char *str) {
   char *e = word_terminator(s);
   e = word_start(e);
   
-  return (s[0] == '!' && s[1] == 'q' && (s[2] == '\n' || s[2] == ' ' || s[2] == 0));
+  return (s[0] == '!' && s[1] == 'q' && (s[2] == ' ' || s[2] == 0));
 }
 
 int is_id(char *str) {
   char *s = word_start(str);
-  s++;
-  
-  if('0' <= *s && *s <= '9') return *s - '0';
+
+  if(*s == '!') s++;
   else return 0;
+
+  // Must have at least one integer after '!'
+  if(*s < '0' || '9' < *s) return 0;
+  
+  while(1) {
+    // Valid char
+    if('0' <= *s && *s <= '9') {
+      s++;
+      continue;
+    }
+    // End of file. Return true
+    else if(*s == 0) return 1;
+    // Invalid char
+    else return 0;
+  }
+}
+
+int input_to_id(char *str) {
+  char *s = word_start(str);
+  char *e = word_terminator(s);
+  s++;
+
+  int rtn = 0;
+  while(s < e) {
+    rtn *= 10;
+    rtn += *s - '0';
+    s++;
+  }
+
+  return rtn;
+}
+
+void format_input(char *str) {
+  while(1) {
+    // If end of string
+    if(*str == 0) return;
+    // Replace newline with end of string
+    if(*str == '\n') {
+      *str = 0;
+      return;
+    }  
+    str++;
+  }  
 }
 
 /* First 'echo' method
